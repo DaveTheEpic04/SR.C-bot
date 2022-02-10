@@ -143,6 +143,28 @@ def get_var_list(game):
 		for value in dict['values']['values'].values():
 			print(f"\tVariable:\t{value['label']}")
 
+def get_discord(game):
+	if game == "speedrun.com":
+		print("\nspeedrun.com:\thttps://discord.gg/0h6sul1ZwHVpXJmK")
+		return
+	game_id = get_game_id(game)
+	if game_id == None:
+		input_error(2)
+	game = requests.get(f"{SRC_API}/games/{game_id}").json()['data']
+	if game['discord'] != "":
+		print("\n" + get_game_name(game_id) + ":\t", game['discord'])
+	else:
+		print("\n" + get_game_name(game_id), "does not have a discord server linked")
+
+def get_following(user):
+	user_id = get_id(user)
+	if user_id == None:
+		input_error(2)
+	following = requests.get(f"https://www.speedrun.com/_fedata/user/stats?userId={user_id}").json()['followStats']
+	print("")
+	for game in following:
+		print(game['game']['name'])
+	return
 
 def get_run_count(username, game_id):
 	offset = 0
@@ -179,9 +201,14 @@ def get_wr_count(username):
 	if user_id == None:
 		input_error(2)
 	while True:
-		count += len(requests.get(f"{SRC_API}/users/{user_id}/personal-bests?top=1&max=200&offset={offset}").json()['data'])
+		runs = requests.get(f"{SRC_API}/users/{user_id}/personal-bests?top=1&max=200&offset={offset}").json()['data']
+		count += len(runs)
 		if count % 200 == 0:
 			offset += 200
+			if offset == 10000:
+				print("\nPlayer:\t\t", username, "\nWorld Records:\t10000")
+			elif runs['data'] == []:
+				print("\nPlayer:\t\t", username, "\nWorld Records:\t", count)
 		else:
 			username = get_player_name(user_id)
 			print("\nPlayer:\t\t", username, "\nWorld Records:\t", count)
@@ -194,9 +221,14 @@ def get_podium_count(username):
 	if user_id == None:
 		input_error(2)
 	while True:
-		count += len(requests.get(f"{SRC_API}/users/{user_id}/personal-bests?top=3&max=200&offset={offset}").json()['data'])
+		runs = requests.get(f"{SRC_API}/users/{user_id}/personal-bests?top=3&max=200&offset={offset}").json()['data']
+		count += len(runs)
 		if count % 200 == 0:
 			offset += 200
+			if offset == 10000:
+				print("\nPlayer:\t\t", username, "\nPodiums:\t10000")
+			elif runs['data'] == []:
+				print("\nPlayer:\t\t", username, "\nPodiums:\t", count)
 		else:
 			username = get_player_name(user_id)
 			print("\nPlayer:\t\t", username, "\nPodiums:\t", count)
@@ -231,7 +263,6 @@ def get_il_num_runs(game_id, level_id, cat_id):
 			offset += 200
 		else:
 			return count
-
 
 def get_wr(game, category):
 	game_id = get_game_id(game)
@@ -465,7 +496,7 @@ a = [None, None, None, None, None, None, None]
 for i in range(0, len(argv)):
 	a[i] = argv[i]
 
-commands = ['help', 'run', 'user_id', 'game_id', 'level_id', 'runs', 'variables', 'wrs', 'podiums', 'verified', 'vlb', 'vpg', 'rpg', 'rpc', 'rplc', 'category_id', 'wr', 'pb', 'lb_runs']
+commands = ['help', 'run', 'user_id', 'game_id', 'level_id', 'runs', 'variables', 'discord', 'following', 'wrs', 'podiums', 'verified', 'vlb', 'vpg', 'rpg', 'rpc', 'rplc', 'category_id', 'wr', 'pb', 'lb_runs']
 try:
 	commands.index(a[1])
 except ValueError:
@@ -491,6 +522,10 @@ if a[1] == "help":
 		print("\nruns {username} [game]\n\nDisplays the total number of runs done by a player")
 	elif a[2] == 'variables':
 		print("\nvariables {game}\n\nDisplays the variables of a game and all possible values of that variable")
+	elif a[2] == 'discord':
+		print("\ndiscord {game}\n\nGives the discord link for a given game")
+	elif a[2] == 'following':
+		print("\nfollowing {user}\n\nGives a list of games a user is following")
 	elif a[2] == 'wrs':
 		print("\nwrs {username}\n\nDisplays the total number of world record runs done by a player")
 	elif a[2] == 'podiums':
@@ -553,6 +588,10 @@ elif a[1] == 'runs':
 		print("\nPlayer:\t", username, "\nRuns:\t", count)
 elif a[1] == 'variables':
 	get_var_list(a[2])
+elif a[1] == 'discord':
+	get_discord(a[2])
+elif a[1] == 'following':
+	get_following(a[2])
 elif a[1] == 'wrs':
 	get_wr_count(a[2])
 elif a[1] == 'podiums':
