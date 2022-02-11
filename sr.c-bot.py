@@ -133,6 +133,16 @@ def get_il_cat_id(game_id, category):
 			print(f"\nName Error: Could not find category \"{category}\" in {get_game_name(game_id)}")
 			sys.exit()
 
+def get_level_list(game):
+	print("")
+	try:
+		levels = requests.get(f"{SRC_API}/games/{get_game_id(game)}/levels").json()['data']
+	except KeyError:
+		input_error(2)
+	for dict in levels:
+		print(f"Level Name: {dict['name']}")
+	print(f"\nNo. of Levels: {len(levels)}")		
+
 def get_var_list(game):
 	try:
 		vars = requests.get(f"{SRC_API}/games/{get_game_id(game)}/variables").json()['data']
@@ -511,13 +521,18 @@ def get_comsob(game, category):
 		runs = requests.get(f"{SRC_API}/games/{game_id}/records?top=1&max=200&scope=levels&offset={offset}").json()['data']
 		for run in runs:
 			if run['category'] == cat_id:
-				sob += run['runs'][0]['run']['times']['primary_t']
+				try:
+					sob += run['runs'][0]['run']['times']['primary_t']
+				except IndexError:
+					print("\nThis category does not have all runs completed")
+					return
 		if len(runs) == 200:
 			offset += 200
 		elif len(runs) != 200:
 			sob = conv_to_time(sob)
 			print(f"\nGame:\t\t{get_game_name(game_id)}\nCategory:\t{get_cat_name(cat_id)}\nSoB:\t\t{sob}")
 			return
+				
 
 def get_sob(user, game, category):
 	user_id = get_id(user)
@@ -529,17 +544,23 @@ def get_sob(user, game, category):
 		input_error(3)
 	sob = 0
 	offset = 0
+	level = 0
 	while True:
-		runs = requests.get(f"{SRC_API}/users/{user_id}/personal_bests?max=200&game={game_id}&offset={offset}").json()['data']
+		runs = requests.get(f"{SRC_API}/users/{user_id}/personal-bests?max=200&game={game_id}&offset={offset}").json()['data']
 		for run in runs:
-			if run['category'] == cat_id:
-				sob += run['runs'][0]['run']['times']['primary_t']
+			if run['run']['category'] == cat_id:
+				sob += run['run']['times']['primary_t']
+				level += 1
 		if len(runs) == 200:
 			offset += 200
 		elif len(runs) != 200:
-			sob = round(sob, 3)
-			print(f"\nUser:\t\t{get_player_name(user_id)}\nGame:\t\t{get_game_name(game_id)}\nCategory:\t{get_cat_name(cat_id)}\nSoB:\t\t{sob}")
-			return
+			if level == len(requests.get(f"{SRC_API}/games/{game_id}/levels").json()['data']):
+				sob = conv_to_time(sob)
+				print(f"\nUser:\t\t{get_player_name(user_id)}\nGame:\t\t{get_game_name(game_id)}\nCategory:\t{get_cat_name(cat_id)}\nSoB:\t\t{sob}")
+				return
+			else:
+				print("\nNot all levels have been completed by this user")
+				return
 
 def input_error(missing):
 	if missing == None:
@@ -555,7 +576,7 @@ a = [None, None, None, None, None, None, None]
 for i in range(0, len(argv)):
 	a[i] = argv[i]
 
-commands = ['help', 'run', 'user_id', 'game_id', 'level_id', 'runs', 'variables', 'discord', 'following', 'wrs', 'podiums', 'verified', 'pending', 'vlb', 'vpg', 'rpg', 'rpc', 'rplc', 'comsob', 'sob', 'category_id', 'wr', 'pb', 'lb_runs']
+commands = ['help', 'run', 'user_id', 'game_id', 'level_id', 'runs', 'levels', 'variables', 'discord', 'following', 'wrs', 'podiums', 'verified', 'pending', 'vlb', 'vpg', 'rpg', 'rpc', 'rplc', 'comsob', 'sob', 'category_id', 'wr', 'pb', 'lb_runs']
 try:
 	commands.index(a[1])
 except ValueError:
@@ -579,6 +600,8 @@ if a[1] == "help":
 		print("\nlevel_id {game} {level}\n\nDisplays the id given to a level of a game")
 	elif a[2] == 'runs':
 		print("\nruns {username} [game]\n\nDisplays the total number of runs done by a player")
+	elif a[2] == 'levels':
+		print("\nlevels {game}\n\nDisplays a list of every level in a game")
 	elif a[2] == 'variables':
 		print("\nvariables {game}\n\nDisplays the variables of a game and all possible values of that variable")
 	elif a[2] == 'discord':
@@ -651,6 +674,8 @@ elif a[1] == 'runs':
 		print(f"\nPlayer:\t{username}\nGame:\t{game}\nRuns:\t{count}")
 	else:
 		print(f"\nPlayer:\t{username}\nRuns:\t{count}")
+elif a[1] == 'levels':
+	get_level_list(a[2])
 elif a[1] == 'variables':
 	get_var_list(a[2])
 elif a[1] == 'discord':
