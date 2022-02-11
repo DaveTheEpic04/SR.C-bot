@@ -562,6 +562,30 @@ def get_sob(user, game, category):
 				print("\nNot all levels have been completed by this user")
 				return
 
+def get_avg_pos(user, game, category):
+	user_id = get_id(user)
+	game_id = get_game_id(game)
+	cat_id = get_il_cat_id(game_id, category)
+	if user_id == None:
+		input_error(2)
+	if game_id == None:
+		input_error(3)
+	pos = 0
+	offset = 0
+	level = 0
+	while True:
+		runs = requests.get(f"{SRC_API}/users/{user_id}/personal-bests?max=200&game={game_id}&offset={offset}").json()['data']
+		for run in runs:
+			if run['run']['category'] == cat_id:
+				pos += run['place']
+				level += 1
+		if len(runs) == 200:
+			offset += 200
+		elif len(runs) != 200:
+			pos = round(pos/level, 3)
+			print(f"\nUser:\t\t\t{get_player_name(user_id)}\nGame:\t\t\t{get_game_name(game_id)}\nCategory:\t\t{get_cat_name(cat_id)}\nAverage Position:\t{pos}")
+			return
+
 def input_error(missing):
 	if missing == None:
 		print("\nIncorrect Variable: Check your variables")
@@ -576,7 +600,7 @@ a = [None, None, None, None, None, None, None]
 for i in range(0, len(argv)):
 	a[i] = argv[i]
 
-commands = ['help', 'run', 'user_id', 'game_id', 'level_id', 'runs', 'levels', 'variables', 'discord', 'following', 'wrs', 'podiums', 'verified', 'pending', 'vlb', 'vpg', 'rpg', 'rpc', 'rplc', 'comsob', 'sob', 'category_id', 'wr', 'pb', 'lb_runs']
+commands = ['help', 'run', 'user_id', 'game_id', 'level_id', 'runs', 'levels', 'variables', 'discord', 'following', 'wrs', 'podiums', 'verified', 'pending', 'vlb', 'vpg', 'rpg', 'rpc', 'rplc', 'comsob', 'sob', 'avg_pos', 'category_id', 'wr', 'pb', 'lb_runs']
 try:
 	commands.index(a[1])
 except ValueError:
@@ -630,6 +654,8 @@ if a[1] == "help":
 		print("\ncomsob {game} [category]\n\nDisplays the community sum of best for a given category")
 	elif a[2] == 'sob':
 		print("\nsob {user} {game} [category]\n\nDisplays a users sum of best for a given category")
+	elif a[2] == 'avg_pos':
+		print("\navg_pos {user} {game} [category]\n\nDisplays the average position of a user in a given category for ILs")
 	elif a[2] == 'category_id':
 		print("\ncategory_id {game/level} {game_id} {category}\n\nDisplays the id given to a category of a game")
 	elif a[2] == 'wr':
@@ -710,6 +736,8 @@ elif a[1] == 'comsob':
 	get_comsob(a[2], a[3])
 elif a[1] == 'sob':
 	get_sob(a[2], a[3], a[4])
+elif a[1] == 'avg_pos':
+	get_avg_pos(a[2], a[3], a[4])
 elif a[1] is None:
 	print("\n[SRC bot] Missing Command: Type help to see a list of commands")
 elif a[1] == 'category_id' and a[2] == 'game':
