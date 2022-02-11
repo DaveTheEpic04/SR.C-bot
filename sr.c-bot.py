@@ -64,8 +64,8 @@ def get_runs(username):
 def get_run(id):
 	try:
 		run = requests.get(f"{SRC_API}/runs/{id}").json()['data']
-	except KeyError:	
-		print("\nName Error: Could not find run with code \"" + id + "\"")
+	except KeyError:
+		print(f"\nName Error: Could not find run with code \"{id}\"")
 		sys.exit()
 	game = get_game_name(run['game'])
 	player = get_player_name(run['players'][0]['id'])
@@ -73,9 +73,9 @@ def get_run(id):
 	time = conv_to_time(run['times']['primary_t'])
 	if run['level'] != None:
 		level = get_level_name(run['level'])
-		print("\nPlayer:\t\t" + player + "\nGame:\t\t" + game + "\nLevel:\t\t" + level + "\nCategory:\t" + cat + "\nTime:\t\t" + time + "\nLink:\t\t" + run['weblink'])
+		print(f"\nPlayer:\t\t{player}\nGame:\t\t{game}\nLevel:\t\t{level}\nCategory:\t{cat}\nTime:\t\t{time}\nLink:\t\t{run['weblink']}")
 	else:
-		print("\nPlayer:\t\t" + player + "\nGame:\t\t" + game + "\nCategory:\t" + cat + "\nTime:\t\t" + time + "\nLink:\t\t" + run['weblink'])
+		print(f"\nPlayer:\t\t{player}\nGame:\t\t{game}\nCategory:\t{cat}\nTime:\t\t{time}\nLink:\t\t{run['weblink']}")
 
 def get_id(username):
 	try:
@@ -115,7 +115,7 @@ def get_cat_id(game_id, category):
 				return runs[count]['id']
 			count += 1
 		except (IndexError, KeyError):
-			print("\nName Error: Could not find category \"" + category + "\" in", get_game_name(game_id))
+			print(f"\nName Error: Could not find category \"{category}\" in {get_game_name(game_id)}")
 			sys.exit()
 
 def get_il_cat_id(game_id, category):
@@ -130,7 +130,7 @@ def get_il_cat_id(game_id, category):
 				return runs[count]['id']
 			count += 1
 		except (IndexError, KeyError):
-			print("\nName Error: Could not find category \"" + category + "\" in", get_game_name(game_id))
+			print(f"\nName Error: Could not find category \"{category}\" in {get_game_name(game_id)}")
 			sys.exit()
 
 def get_var_list(game):
@@ -152,9 +152,9 @@ def get_discord(game):
 		input_error(2)
 	game = requests.get(f"{SRC_API}/games/{game_id}").json()['data']
 	if game['discord'] != "":
-		print("\n" + get_game_name(game_id) + ":\t", game['discord'])
+		print(f"\n{get_game_name(game_id)}:\t{game['discord']}")
 	else:
-		print("\n" + get_game_name(game_id), "does not have a discord server linked")
+		print(f"\n{get_game_name(game_id)} does not have a discord server linked")
 
 def get_following(user):
 	user_id = get_id(user)
@@ -206,12 +206,12 @@ def get_wr_count(username):
 		if count % 200 == 0:
 			offset += 200
 			if offset == 10000:
-				print("\nPlayer:\t\t", username, "\nWorld Records:\t10000")
+				print(f"\nPlayer:\t\t{username}\nWorld Records:\t10000")
 			elif runs['data'] == []:
-				print("\nPlayer:\t\t", username, "\nWorld Records:\t", count)
+				print(f"\nPlayer:\t\t{username}\nWorld Records:\t{count}")
 		else:
 			username = get_player_name(user_id)
-			print("\nPlayer:\t\t", username, "\nWorld Records:\t", count)
+			print(f"\nPlayer:\t\t{username}\nWorld Records:\t{count}")
 			return
 
 def get_podium_count(username):
@@ -226,12 +226,12 @@ def get_podium_count(username):
 		if count % 200 == 0:
 			offset += 200
 			if offset == 10000:
-				print("\nPlayer:\t\t", username, "\nPodiums:\t10000")
+				print(f"\nPlayer:\t\t{username}\nPodiums:\t10000")
 			elif runs['data'] == []:
-				print("\nPlayer:\t\t", username, "\nPodiums:\t", count)
+				print(f"\nPlayer:\t\t{username}\nPodiums:\t{count}")
 		else:
 			username = get_player_name(user_id)
-			print("\nPlayer:\t\t", username, "\nPodiums:\t", count)
+			print(f"\nPlayer:\t\t{username}\nPodiums:\t{count}")
 			return
 
 def get_num_runs(game_id, cat_id):
@@ -280,7 +280,7 @@ def get_wr(game, category):
 	if cat_id == None or category == None:
 		category = requests.get(f"{SRC_API}/games/{game_id}/categories").json()['data'][0]['name']
 	game = get_game_name(game_id)
-	print("\nGame:\t\t", game, "\nCategory:\t", category, "\nPlayer:\t\t", player, "\nTime:\t\t", time, "\nLink:\t\t", link)
+	print(f"\nGame:\t\t{game}\nCategory:\t{category}\nPlayer:\t\t{player}\nTime:\t\t{time}\nLink:\t\t{link}")
 
 def get_il_wr(game, level, category):
 	game_id = get_game_id(game)
@@ -302,7 +302,7 @@ def get_il_wr(game, level, category):
 	if level_id == None or level == None:
 		level = requests.get(f"{SRC_API}/games/{game_id}/levels").json()['data'][0]['name']
 	game = get_game_name(game_id)
-	print("\nGame:\t\t", game, "\nLevel:\t\t", level, "\nCategory:\t", category, "\nPlayer:\t\t", player, "\nTime:\t\t", time, "\nLink:\t\t", link)
+	print(f"\nGame:\t\t{game}\nLevel:\t\t{level}\nCategory:\t{category}\nPlayer:\t\t{player}\nTime:\t\t{time}\nLink:\t\t{link}")
 
 def get_pb(username, game, category):
 	user_id = get_id(username)
@@ -322,7 +322,7 @@ def get_pb(username, game, category):
 	if cat_id == None or category == None:
 		category = requests.get(f"{SRC_API}/games/{game_id}/categories").json()['data'][0]['name']
 	game = get_game_name(game_id)
-	print("\nGame:\t\t", game, "\nCategory:\t", category, "\nPlayer:\t\t", player, "\nTime:\t\t", time, "\nLink:\t\t", link)
+	print(f"\nGame:\t\t{game}\nCategory:\t{category}\nPlayer:\t\t{player}\nTime:\t\t{time}\nLink:\t\t{link}")
 
 def get_il_pb(username, game, level, category):
 	user_id = get_id(username)
@@ -346,7 +346,7 @@ def get_il_pb(username, game, level, category):
 	if level_id == None or level == None:
 		level = requests.get(f"{SRC_API}/games/{game_id}/levels").json()['data'][0]['name']
 	game = get_game_name(game_id)
-	print("\nGame:\t\t", game, "\nLevel:\t\t", level, "\nCategory:\t", category, "\nPlayer:\t\t", player, "\nTime:\t\t", time, "\nLink:\t\t", link)
+	print(f"\nGame:\t\t{game}\nLevel:\t\t{level}\nCategory:\t{category}\nPlayer:\t\t{player}\nTime:\t\t{time}\nLink:\t\t{link}")
 
 def get_verified(username, game):
 	offset = 0
@@ -385,6 +385,24 @@ def get_verified(username, game):
 		else:
 			return count
 
+def get_pending(game):
+	game_id = get_game_id(game)
+	if game_id == None:
+		input_error(2)
+	count = 0
+	offset = 0
+	while True:
+		pending = requests.get(f"{SRC_API}/runs?game={game_id}&status=new&max=200&offset={offset}").json()['data']
+		count += len(pending)
+		if count % 200 == 0:
+			offset += 200
+			if offset == 10000 or len(pending) == 0:
+				print(f"\n{get_game_name(game_id)}:\t{count}")
+				return
+		else:
+			print(f"\n{get_game_name(game_id)}:\t{count}")
+			return
+
 def get_vlb(game):
 	game_id = get_game_id(game)
 	if game_id == None:
@@ -401,7 +419,7 @@ def get_vlb(game):
 		vlb_name.append(name['name'])
 	vlb_name = spaces(vlb_name)
 	for j in range(0, len(vlb_list)):
-		print("Moderator:", vlb_name[j], "\tVerified:", vlb_list[j]['verified'])
+		print(f"Moderator: {vlb_name[j]}\tVerified: {vlb_list[j]['verified']}")
 
 def get_vpg(user):
 	user_id = get_id(user)
@@ -419,7 +437,7 @@ def get_vpg(user):
 		vpg_game.append(game['game'])
 	vpg_game = spaces(vpg_game)
 	for j in range(0, len(vpg_list)):
-		print("Game:", vpg_game[j], "\tVerified:", vpg_list[j]['verified'])
+		print(f"Game: {vpg_game[j]}\tVerified: {vpg_list[j]['verified']}")
 
 def get_rpg(username):
 	user_id = get_id(username)
@@ -443,7 +461,7 @@ def get_rpg(username):
 		rpg_game.append(game['game'])
 	rpg_game = spaces(rpg_game)
 	for j in range(0, len(rpg_list)):
-		print("Game:", rpg_game[j], "\tRuns:", rpg_list[j]['runs'])
+		print(f"Game: {rpg_game[j]}\tRuns: {rpg_list[j]['runs']}")
 
 def get_rpc(game):
 	game_id = get_game_id(game)
@@ -460,7 +478,7 @@ def get_rpc(game):
 		rpc_cat.append(cat['category'])
 	rpc_cat = spaces(rpc_cat)
 	for i in range(0, len(num_runs)):
-		print("Category:\t", rpc_cat[i], "\tRuns:\t", num_runs[i]['runs'])
+		print(f"Category: {rpc_cat[i]}\tRuns:\t{num_runs[i]['runs']}")
 
 def get_rplc(game, level):
 	game_id = get_game_id(game)
@@ -480,7 +498,48 @@ def get_rplc(game, level):
 		rplc_cat.append(cat['category'])
 	rplc_cat = spaces(rplc_cat)
 	for i in range(0, len(num_runs)):
-		print("Category:\t", rplc_cat[i], "\tRuns:\t", num_runs[i]['runs'])
+		print(f"Category: {rplc_cat[i]}\tRuns:\t{num_runs[i]['runs']}")
+
+def get_comsob(game, category):
+	game_id = get_game_id(game)
+	cat_id = get_il_cat_id(game_id, category)
+	if game_id == None:
+		input_error(2)
+	sob = 0
+	offset = 0
+	while True:
+		runs = requests.get(f"{SRC_API}/games/{game_id}/records?top=1&max=200&scope=levels&offset={offset}").json()['data']
+		for run in runs:
+			if run['category'] == cat_id:
+				sob += run['runs'][0]['run']['times']['primary_t']
+		if len(runs) == 200:
+			offset += 200
+		elif len(runs) != 200:
+			sob = conv_to_time(sob)
+			print(f"\nGame:\t\t{get_game_name(game_id)}\nCategory:\t{get_cat_name(cat_id)}\nSoB:\t\t{sob}")
+			return
+
+def get_sob(user, game, category):
+	user_id = get_id(user)
+	game_id = get_game_id(game)
+	cat_id = get_il_cat_id(game_id, category)
+	if user_id == None:
+		input_error(2)
+	if game_id == None:
+		input_error(3)
+	sob = 0
+	offset = 0
+	while True:
+		runs = requests.get(f"{SRC_API}/users/{user_id}/personal_bests?max=200&game={game_id}&offset={offset}").json()['data']
+		for run in runs:
+			if run['category'] == cat_id:
+				sob += run['runs'][0]['run']['times']['primary_t']
+		if len(runs) == 200:
+			offset += 200
+		elif len(runs) != 200:
+			sob = round(sob, 3)
+			print(f"\nUser:\t\t{get_player_name(user_id)}\nGame:\t\t{get_game_name(game_id)}\nCategory:\t{get_cat_name(cat_id)}\nSoB:\t\t{sob}")
+			return
 
 def input_error(missing):
 	if missing == None:
@@ -489,14 +548,14 @@ def input_error(missing):
 		print("\nMissing Variable: Type help {command} to see the required variables")
 		sys.exit()
 	elif a[missing] != None:
-		print("\nIncorrect Variable: Check", a[missing])
+		print(f"\nIncorrect Variable: Check {a[missing]}")
 		sys.exit()
 
 a = [None, None, None, None, None, None, None]
 for i in range(0, len(argv)):
 	a[i] = argv[i]
 
-commands = ['help', 'run', 'user_id', 'game_id', 'level_id', 'runs', 'variables', 'discord', 'following', 'wrs', 'podiums', 'verified', 'vlb', 'vpg', 'rpg', 'rpc', 'rplc', 'category_id', 'wr', 'pb', 'lb_runs']
+commands = ['help', 'run', 'user_id', 'game_id', 'level_id', 'runs', 'variables', 'discord', 'following', 'wrs', 'podiums', 'verified', 'pending', 'vlb', 'vpg', 'rpg', 'rpc', 'rplc', 'comsob', 'sob', 'category_id', 'wr', 'pb', 'lb_runs']
 try:
 	commands.index(a[1])
 except ValueError:
@@ -532,6 +591,8 @@ if a[1] == "help":
 		print("\npodiums {username}\n\nDisplays the total number of top 3 runs done by a player")
 	elif a[2] == 'verified':
 		print("\nverified {username} [game]\n\nDisplays the number of runs examined by a moderator")
+	elif a[2] == 'pending':
+		print("\npending {game}\n\nDisplays the number of a runs awaiting verification of a game")
 	elif a[2] == 'vlb':
 		print("\nvlb {game}\n\nDisplays a leaderboard of the moderators and how many runs each has examined for a game")
 	elif a[2] == 'vpg':
@@ -542,6 +603,10 @@ if a[1] == "help":
 		print("\nrpc {game}\n\nDisplays the number of runs in each full game category of a game")
 	elif a[2] == 'rplc':
 		print("\nrplc {game} {level}\n\nDisplays the number of runs in each category of a level")
+	elif a[2] == 'comsob':
+		print("\ncomsob {game} [category]\n\nDisplays the community sum of best for a given category")
+	elif a[2] == 'sob':
+		print("\nsob {user} {game} [category]\n\nDisplays a users sum of best for a given category")
 	elif a[2] == 'category_id':
 		print("\ncategory_id {game/level} {game_id} {category}\n\nDisplays the id given to a category of a game")
 	elif a[2] == 'wr':
@@ -557,14 +622,14 @@ elif a[1] == 'run':
 elif a[1] == 'user_id':
 	id = get_id(a[2])
 	if id != None:
-		print("\n" + get_player_name(id) + ":\t" + id)
+		print(f"\n{get_player_name(id)}: {id}")
 	else:
 		input_error(2)
 elif a[1] == 'game_id':
 	id = get_game_id(a[2])
 	game = get_game_name(id)
 	if id != None:
-		print("\n" + game + ":", id)
+		print(f"\n{game}: {id}")
 	else:
 		input_error(2)
 elif a[1] == 'level_id':
@@ -573,7 +638,7 @@ elif a[1] == 'level_id':
 	game = get_game_name(game_id)
 	level = get_level_name(id)
 	if id != None:
-		print("\n" + game + "\n" + level + ":", id)
+		print(f"\n{game}\n{level}: {id}")
 	elif game_id == None:
 		input_error(2)
 	else:
@@ -583,9 +648,9 @@ elif a[1] == 'runs':
 	username = get_player_name(a[2])
 	if a[3] != None:
 		game = get_game_name(a[3])
-		print("\nPlayer:\t", username, "\nGame:\t", game, "\nRuns:\t", count)
+		print(f"\nPlayer:\t{username}\nGame:\t{game}\nRuns:\t{count}")
 	else:
-		print("\nPlayer:\t", username, "\nRuns:\t", count)
+		print(f"\nPlayer:\t{username}\nRuns:\t{count}")
 elif a[1] == 'variables':
 	get_var_list(a[2])
 elif a[1] == 'discord':
@@ -601,9 +666,11 @@ elif a[1] == 'verified':
 	username = get_player_name(a[2])
 	if a[3] != None:
 		game = get_game_name(a[3])
-		print("\nModerator:\t", username, "\nGame:\t\t", game, "\nVerified:\t", count)
+		print(f"\nModerator:\t{username}\nGame:\t\t{game}\nVerified:\t{count}")
 	else:
-		print("\nModerator:\t", username, "\nVerified:\t", count)
+		print(f"\nModerator:\t{username}\nVerified:\t{count}")
+elif a[1] == 'pending':
+	get_pending(a[2])
 elif a[1] == 'vlb':
 	get_vlb(a[2])
 elif a[1] == 'vpg':
@@ -614,7 +681,11 @@ elif a[1] == 'rpc':
 	get_rpc(a[2])
 elif a[1] == 'rplc':
 	get_rplc(a[2], a[3])
-elif a[1] == None:
+elif a[1] == 'comsob':
+	get_comsob(a[2], a[3])
+elif a[1] == 'sob':
+	get_sob(a[2], a[3], a[4])
+elif a[1] is None:
 	print("\nMissing Command: Type help to see a list of commands")
 elif a[1] == 'category_id' and a[2] == 'game':
 	game_id = get_game_id(a[3])
@@ -622,7 +693,7 @@ elif a[1] == 'category_id' and a[2] == 'game':
 	game = get_game_name(game_id)
 	category = get_cat_name(id)
 	if id != None:
-		print("\n" + game + "\n" + category + ":", id)
+		print(f"\n{game}\n{category}: {id}")
 	elif game_id == None:
 		input_error(3)
 	else:
@@ -633,7 +704,7 @@ elif a[1] == 'category_id' and a[2] == 'level':
 	game = get_game_name(game_id)
 	category = get_cat_name(id)
 	if id != None:
-		print("\n" + game + "\n" + category + ":", id)
+		print(f"\n{game}\n{category}: {id}")
 	elif game_id == None:
 		input_error(3)
 	else:
@@ -655,7 +726,7 @@ elif a[1] == 'lb_runs' and a[2] == 'game':
 		count = get_num_runs(game_id, cat_id)
 	game = get_game_name(game_id)
 	category = get_cat_name(cat_id)
-	print("\nGame:\t\t", game, "\nCategory:\t", category, "\nRuns:\t\t", count)
+	print(f"\nGame:\t\t{game}\nCategory:\t{category}\nRuns:\t\t{count}")
 elif a[1] == 'lb_runs' and a[2] == 'level':
 	game_id = get_game_id(a[3])
 	if game_id == None:
@@ -666,6 +737,6 @@ elif a[1] == 'lb_runs' and a[2] == 'level':
 	game = get_game_name(game_id)
 	level = get_level_name(level_id)
 	category = get_cat_name(cat_id)
-	print("\nGame:\t\t", game, "\nLevel:\t\t", level, "\nCategory:\t", category, "\nRuns:\t\t", count)
+	print(f"\nGame:\t\t{game}\nLevel:\t\t{level}\nCategory:\t{category}\nRuns:\t\t{count}")
 elif a[2] != None:
 	print("\nIncorrect Variable: Type help {command} to see the required variables")
