@@ -500,7 +500,7 @@ commands = ['help', 'run', 'user_id', 'game_id', 'level_id', 'runs', 'variables'
 try:
 	commands.index(a[1])
 except ValueError:
-	print("\nNo Command Found: Type help to see a list of commands")
+	print("\n[SRC bot] No Command Found: Type help to see a list of commands")
 	sys.exit()
 
 if a[1] == "help":
