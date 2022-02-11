@@ -559,7 +559,7 @@ commands = ['help', 'run', 'user_id', 'game_id', 'level_id', 'runs', 'variables'
 try:
 	commands.index(a[1])
 except ValueError:
-	print("\nNo Command Found: Type help to see a list of commands")
+	print("\n[SRC bot] No Command Found: Type help to see a list of commands")
 	sys.exit()
 
 if a[1] == "help":
@@ -686,7 +686,7 @@ elif a[1] == 'comsob':
 elif a[1] == 'sob':
 	get_sob(a[2], a[3], a[4])
 elif a[1] is None:
-	print("\nMissing Command: Type help to see a list of commands")
+	print("\n[SRC bot] Missing Command: Type help to see a list of commands")
 elif a[1] == 'category_id' and a[2] == 'game':
 	game_id = get_game_id(a[3])
 	id = get_cat_id(game_id, a[4])
@@ -739,4 +739,4 @@ elif a[1] == 'lb_runs' and a[2] == 'level':
 	category = get_cat_name(cat_id)
 	print(f"\nGame:\t\t{game}\nLevel:\t\t{level}\nCategory:\t{category}\nRuns:\t\t{count}")
 elif a[2] != None:
-	print("\nIncorrect Variable: Type help {command} to see the required variables")
+	print("\n[SRC bot] Incorrect Variable: Type help {command} to see the required variables")
