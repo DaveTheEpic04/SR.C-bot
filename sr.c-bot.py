@@ -133,6 +133,16 @@ def get_il_cat_id(game_id, category):
 			print(f"\nName Error: Could not find category \"{category}\" in {get_game_name(game_id)}")
 			sys.exit()
 
+def get_cat_list(game):
+	print("")
+	try:
+		cats = requests.get(f"{SRC_API}/games/{get_game_id(game)}/categories").json()['data']
+	except KeyError:
+		input_error(2)
+	for dict in cats:
+		print(f"Category Type: {dict['type']} \tCategory Name: {dict['name']}")
+	print(f"\nNo. of Categories: {len(cats)}")
+
 def get_level_list(game):
 	print("")
 	try:
@@ -141,7 +151,7 @@ def get_level_list(game):
 		input_error(2)
 	for dict in levels:
 		print(f"Level Name: {dict['name']}")
-	print(f"\nNo. of Levels: {len(levels)}")		
+	print(f"\nNo. of Levels: {len(levels)}")
 
 def get_var_list(game):
 	try:
@@ -600,7 +610,7 @@ a = [None, None, None, None, None, None, None]
 for i in range(0, len(argv)):
 	a[i] = argv[i]
 
-commands = ['help', 'run', 'user_id', 'game_id', 'level_id', 'runs', 'levels', 'variables', 'discord', 'following', 'wrs', 'podiums', 'verified', 'pending', 'vlb', 'vpg', 'rpg', 'rpc', 'rplc', 'comsob', 'sob', 'avg_pos', 'category_id', 'wr', 'pb', 'lb_runs']
+commands = ['help', 'run', 'user_id', 'game_id', 'level_id', 'runs', 'categories', 'levels', 'variables', 'discord', 'following', 'wrs', 'podiums', 'verified', 'pending', 'vlb', 'vpg', 'rpg', 'rpc', 'rplc', 'comsob', 'sob', 'avg_pos', 'category_id', 'wr', 'pb', 'lb_runs']
 try:
 	commands.index(a[1])
 except ValueError:
@@ -624,6 +634,8 @@ if a[1] == "help":
 		print("\nlevel_id {game} {level}\n\nDisplays the id given to a level of a game")
 	elif a[2] == 'runs':
 		print("\nruns {username} [game]\n\nDisplays the total number of runs done by a player")
+	elif a[2] == 'categories':
+		print("\ncategories {game}\n\nDisplays a list of every category in a game and its type")
 	elif a[2] == 'levels':
 		print("\nlevels {game}\n\nDisplays a list of every level in a game")
 	elif a[2] == 'variables':
@@ -700,6 +712,8 @@ elif a[1] == 'runs':
 		print(f"\nPlayer:\t{username}\nGame:\t{game}\nRuns:\t{count}")
 	else:
 		print(f"\nPlayer:\t{username}\nRuns:\t{count}")
+elif a[1] == 'categories':
+	get_cat_list(a[2])
 elif a[1] == 'levels':
 	get_level_list(a[2])
 elif a[1] == 'variables':
